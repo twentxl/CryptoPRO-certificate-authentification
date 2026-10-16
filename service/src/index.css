@@ -1,0 +1,25 @@
+:root {
+  --background-color: #FFFFFF;
+  --modal-content-background: #E6E6E6;
+  --text-color: #1c1c1c;
+  --main-color: #2b579a;
+  --font-size: 1rem;
+
+  --secondary-backColor: #2cb8d9;
+  --dark-backColor: #1c1c1c;
+  --success-backColor: #a4e3dd;
+  --error-backColor: #ecc4c8;
+  --warning-backColor: #fbff8d;
+
+  --error-textColor: #58151c;
+  --success-textColor: #44847e;
+  --warning-textColor: #979b28;
+}
+
+* {
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  color: var(--text-color);
+}
