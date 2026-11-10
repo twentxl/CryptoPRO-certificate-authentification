@@ -2,10 +2,18 @@ import type { Certificate, User } from "../types/models";
 import { parseDnToUser } from "../lib/parseDn";
 
 const getStoreCertificates = async() => {
-    await cadesplugin;
-    const store = await cadesplugin.CreateObjectAsync("CAdESCOM.Store");
-    await store.Open();
-    return await store.Certificates;
+    try {
+        console.log ("Проверка наличие плагина...");
+
+        await cadesplugin;
+        const store = await cadesplugin.CreateObjectAsync("CAdESCOM.Store");
+        await store.Open();
+        return await store.Certificates;
+    } catch {
+        throw new Error("Не удалось найти плагин cades browser plugin");
+    } finally {
+        console.log ("Проверка плагина завершена")
+    }
 }
 
 export const getAllCertificates = async(): Promise<Certificate[]> => {

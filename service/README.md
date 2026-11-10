@@ -1,75 +1,61 @@
-# React + TypeScript + Vite
+# Сервис для аутентификации по сертификату Крипто ПРО
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Требования для работы:
+- Запустить API приложения (репозиторий CertificateAuthentification_API).
+- Установить "Крипто ПРО" на компьютер, иначе программа будет выдавать ошибку.
+- Установить расширение в браузере CADES browser plugin, иначе программа будет выдавать ошибку и требовать установить расширение.
+- Иметь минимум один сертификат Крипто ПРО.
 
-Currently, two official plugins are available:
+## Как подключить приложение к сервису
+- залить папки из репозитория Certificate Authentification Pack в приложение
+- внедрить функцию consumeTokenFromUrl() (обычно пишут в главный файл App.tsx). Он нужен для переадресации после проверки токена
+```javascript
+import { useEffect } from 'react';
+import { consumeTokenFromUrl } from './auth/auth';
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+useEffect(() => {
+    consumeTokenFromUrl();
+  }, []);
 
-## React Compiler
+```
+- внедрить код получения токена
+В моем случае он написан при клике на кнопку и при наличии токена направляет на страницу ChooseApp
+```javascript
+import { useNavigate } from 'react-router-dom';
+import { redirectToCertService } from '../../auth/auth';
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+const navigate = useNavigate();
 
-## Expanding the ESLint configuration
+// функция проверки токена
+const onEnter = () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+        redirectToCertService();
+        return;
+    }
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+    navigate("ChooseApp/");
+};
+```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Получение информации о сертификате (имя, срок действия и т.д)
+- Импортируем AuthProvider и вставляем в main.tsx приложения
+```javascript
+// пример
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './auth/AuthContext.tsx';
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+createRoot(document.getElementById('root')!).render(
+  <BrowserRouter>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </BrowserRouter>,
+)
 
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+- Получаем данные с помощью хука useAuth
+```javascript
+const { user } = useAuth();
 ```

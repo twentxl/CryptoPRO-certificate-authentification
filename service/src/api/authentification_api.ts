@@ -48,6 +48,7 @@ export const signChallengeBySerial = async (challengeBase64: string,serialNumber
 
     return signatureBase64;
   } catch (error) {
+    alert(error.message);
     console.error("Ошибка подписи challenge: ", error);
     throw error;
   }
@@ -82,6 +83,7 @@ export const auth_login = async (payload: LoginRequest) => {
 
         return JSON.parse(text);
     } catch(error) {
+        alert(error.message);
         console.error(error);
         throw error;
     }
